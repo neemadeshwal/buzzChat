@@ -1,7 +1,7 @@
 import { Grid, Paper, Tab, Tabs } from "@mui/material";
-import { useState } from "react";
 import Login from "./Login";
 import SignUp from "./Signup";
+import { useAuthContext } from "../../contexts/AuthContext";
 interface CustomTabPanelProps {
   index: number;
   children?: React.ReactNode;
@@ -13,10 +13,7 @@ function CustomTabPanel(props: CustomTabPanelProps) {
   return value === index && children;
 }
 const Auth = () => {
-  const [tabValue, setTabValue] = useState<number>(0);
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
+  const { tabValue, handleTabChange } = useAuthContext();
   return (
     <Grid
       container

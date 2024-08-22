@@ -1,6 +1,9 @@
 import { Grid } from "@mui/material";
+import { useConversationalContext } from "../../contexts/ConversationContext";
+import MessageCard from "./MessageCard";
 
 const MessageList = () => {
+  const { allMessages, messagesEndRef } = useConversationalContext();
   return (
     <Grid
       container
@@ -10,7 +13,18 @@ const MessageList = () => {
       flexDirection="column"
       gap={1}
     >
-      hy
+      {allMessages &&
+        allMessages.length > 0 &&
+        allMessages.map((msg, index) => {
+          return (
+            <MessageCard
+              message={msg}
+              key={index}
+              messagesEndRef={messagesEndRef}
+              passRef={allMessages?.length - 1 === index}
+            />
+          );
+        })}
     </Grid>
   );
 };

@@ -16,7 +16,7 @@ export const lightTheme = createTheme({
   palette: {
     mode: "light",
     text: {
-      primary: "#000",
+      primary: "#fff",
       secondary: "#000",
     },
     primary: {

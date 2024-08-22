@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { DarkMode, LightMode, Logout } from "@mui/icons-material";
 import { useThemeContext } from "../../contexts/ThemeContextProvider";
+import useAuth from "../../hooks/useAuth";
 
 const SettingsChatMenu = ({
   settingsAnchorEl,
@@ -17,6 +18,7 @@ const SettingsChatMenu = ({
 }: SettingsMenuProps) => {
   const { mode, handleSetTheme } = useThemeContext();
   const theme = useTheme();
+  const { handleLogout } = useAuth();
   if (settingsAnchorEl) {
     return (
       <Popover
@@ -40,7 +42,7 @@ const SettingsChatMenu = ({
           </ListItemButton>
         </ListItem>
         <ListItem>
-          <ListItemButton onClick={() => {}}>
+          <ListItemButton onClick={() => handleLogout()}>
             <ListItemIcon>
               <Logout />
             </ListItemIcon>

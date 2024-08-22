@@ -1,5 +1,6 @@
 import {
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   Grid,
@@ -7,19 +8,49 @@ import {
 } from "@mui/material";
 import CustomTextField from "../../custom/CustomTextField";
 import AddUserListItem from "../../shared/AddUserListItem";
+import { useConversationalContext } from "../../contexts/ConversationContext";
+import { StartConversationModalProps, User } from "../../utils/types";
+import NoDataAvailable from "../../shared/NoDataAvailable";
+import CustomButton from "../../custom/CustomButton";
 
 const StartConversationModal = ({
   open,
   onClose,
   type,
-}: {
-  open: boolean;
-  type: "DIRECT_MESSAGE" | "GROUP";
-  onClose: any;
-}) => {
+}: StartConversationModalProps) => {
   const theme = useTheme();
+  const {
+    allUsers,
+    searchUserValue,
+    handleSearchUserChange,
+    selectedUserForConversation,
+    setSelectedUserForConversation,
+    handleCreateConversation,
+    groupTitle,
+    setGroupTitle,
+  } = useConversationalContext();
+
+  const renderUsers = (userList: User[]) => {
+    return userList?.map((user: User) => {
+      return (
+        <AddUserListItem
+          key={user?.id}
+          selectedUsers={selectedUserForConversation}
+          setSelectedUsers={setSelectedUserForConversation}
+          user={user}
+          type={type}
+        />
+      );
+    });
+  };
+  function handleClose() {
+    onClose();
+    setSelectedUserForConversation([]);
+  }
+
+  console.log(groupTitle);
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="lg">
+    <Dialog open={open} onClose={handleClose} maxWidth="lg">
       <DialogTitle color={theme.palette.text.secondary}>
         Select users to start a Conversation
       </DialogTitle>
@@ -29,6 +60,8 @@ const StartConversationModal = ({
             placeholder="search user to start a conversation"
             variant="outlined"
             size="small"
+            onChange={handleSearchUserChange}
+            value={searchUserValue}
           />
           {type === "GROUP" && (
             <CustomTextField
@@ -37,6 +70,10 @@ const StartConversationModal = ({
               variant="outlined"
               required
               label="Group title"
+              value={groupTitle}
+              onChange={(
+                e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+              ) => setGroupTitle(e.target.value)}
             />
           )}
 
@@ -48,13 +85,43 @@ const StartConversationModal = ({
             maxHeight="300px"
             sx={{ overflowY: "scroll" }}
           >
-            <AddUserListItem />
-
-            <AddUserListItem />
-            <AddUserListItem />
+            {allUsers && Array.isArray(allUsers) && allUsers?.length > 0 ? (
+              renderUsers(allUsers)
+            ) : (
+              <NoDataAvailable message="No Users Found" />
+            )}
           </Grid>
         </Grid>
       </DialogContent>
+      <DialogActions>
+        <CustomButton
+          sx={{
+            color: theme.palette.primary.main,
+          }}
+          variant="text"
+          onClick={handleClose}
+        >
+          Close
+        </CustomButton>
+
+        <CustomButton
+          disabled={
+            type === "GROUP"
+              ? !groupTitle ||
+                !groupTitle?.trim()?.length ||
+                !selectedUserForConversation?.length
+              : !selectedUserForConversation?.length
+          }
+          disableRipple
+          sx={{
+            bgcolor: theme.palette.primary.main,
+          }}
+          variant="contained"
+          onClick={handleCreateConversation}
+        >
+          Create
+        </CustomButton>
+      </DialogActions>
     </Dialog>
   );
 };

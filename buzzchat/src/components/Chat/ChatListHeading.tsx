@@ -11,17 +11,17 @@ import {
 import { Add, GroupAdd } from "@mui/icons-material";
 import { useState } from "react";
 import StartConversationModal from "../Conversation/StartConversationModal";
-
+import { useConversationalContext } from "../../contexts/ConversationContext";
 const ChatListHeading = () => {
   const theme = useTheme();
-  const [addChatAnchorEl, setAddChatAnchorEl] = useState<HTMLElement | null>(
-    null
-  );
-  const [openCreateConversationModal, setOpenCreateConversationModal] =
-    useState<{ isOpen: boolean; type: "DIRECT_MESSAGE" | "GROUP" }>({
-      isOpen: false,
-      type: "DIRECT_MESSAGE",
-    });
+
+  const {
+    setAddChatAnchorEl,
+    addChatAnchorEl,
+    setOpenCreateConversationModal,
+    openCreateConversationModal,
+  } = useConversationalContext();
+
   return (
     <>
       <ListItem>

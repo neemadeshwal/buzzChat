@@ -3,8 +3,13 @@ import ChatListHeader from "./ChatListHeader";
 import SearchChatListItem from "./SearchChatListItem";
 import ChatListHeading from "./ChatListHeading";
 import ChatListItems from "./ChatListItems";
+import { ChatListDrawerProps } from "../../utils/types";
 
-const ChatListDrawer = ({ drawerWidth }: { drawerWidth: number }) => {
+const ChatListDrawer = ({
+  drawerWidth,
+  conversations,
+}: ChatListDrawerProps) => {
+  console.log(conversations, "check in list draowr.........");
   return (
     <Grid sx={{ width: { sm: drawerWidth } }}>
       <Drawer
@@ -20,7 +25,7 @@ const ChatListDrawer = ({ drawerWidth }: { drawerWidth: number }) => {
           <SearchChatListItem />
           <Divider />
           <ChatListHeading />
-          <ChatListItems />
+          <ChatListItems conversations={conversations} />
         </List>
       </Drawer>
     </Grid>

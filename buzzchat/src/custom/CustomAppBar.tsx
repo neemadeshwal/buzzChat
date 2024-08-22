@@ -8,18 +8,42 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  MenuItem,
   Popover,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
 import { useState } from "react";
+import { CustomAppBarProps } from "../utils/types";
+import { useConversationalContext } from "../contexts/ConversationContext";
+import { useAuthContext } from "../contexts/AuthContext";
+import stringAvatar from "../utils/stringAvatar";
 
-const CustomAppBar = ({ drawerWidth }: { drawerWidth: number }) => {
+const CustomAppBar = ({ drawerWidth }: CustomAppBarProps) => {
   const theme = useTheme();
-  const [chatMenuAnchorEl, setChatMenuAnchorEl] = useState<HTMLElement | null>(
-    null
+
+  const { loggedInUser } = useAuthContext();
+  const {
+    currentConversation,
+    handleGoToHome,
+    handleDeleteConversation,
+    setChatMenuAnchorEl,
+    chatMenuAnchorEl,
+  } = useConversationalContext();
+  const notCurrentMember = currentConversation?.members?.find(
+    (user: any) => user?.userId !== loggedInUser?.user?.id
   );
+
+  const conversationTitle =
+    currentConversation?.type === "DIRECT_MESSAGE"
+      ? notCurrentMember?.user?.name
+      : currentConversation?.groupTitle;
+
+  const conversationImageUrl =
+    currentConversation?.type === "DIRECT_MESSAGE"
+      ? notCurrentMember?.user?.imageUrl
+      : "";
 
   return (
     <>
@@ -31,10 +55,15 @@ const CustomAppBar = ({ drawerWidth }: { drawerWidth: number }) => {
         <Toolbar>
           <Grid container justifyContent="space-between" alignItems="center">
             <Grid item display="flex" alignItems="center" gap={1}>
-              <Avatar />
+              <Avatar
+                src={conversationImageUrl ?? ""}
+                {...(conversationTitle && !conversationImageUrl?.trim()?.length
+                  ? stringAvatar(conversationTitle)
+                  : null)}
+              />
               <Grid item>
                 <Typography color={theme.palette.text.secondary}>
-                  Conversation Title
+                  {conversationTitle ?? ""}
                 </Typography>
                 <Typography
                   variant="caption"
@@ -62,30 +91,26 @@ const CustomAppBar = ({ drawerWidth }: { drawerWidth: number }) => {
           anchorEl={chatMenuAnchorEl}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
+          <MenuItem onClick={handleGoToHome}>
+            <Grid item display="flex" alignItems="center" gap={1}>
+              <IconButton>
                 <Close />
-              </ListItemIcon>
-              <ListItemText
-                primaryTypographyProps={{ color: theme.palette.text.secondary }}
-              >
+              </IconButton>
+              <Typography color={theme.palette.text.secondary}>
                 Close
-              </ListItemText>
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <Delete color="error" />
-              </ListItemIcon>
-              <ListItemText
-                primaryTypographyProps={{ color: theme.palette.text.secondary }}
-              >
-                Delete
-              </ListItemText>
-            </ListItemButton>
-          </ListItem>
+              </Typography>
+            </Grid>
+          </MenuItem>
+          <MenuItem onClick={handleDeleteConversation}>
+            <Grid item display="flex" alignItems="center" gap={1}>
+              <IconButton>
+                <Delete />
+              </IconButton>
+              <Typography color={theme.palette.text.secondary}>
+                delete
+              </Typography>
+            </Grid>
+          </MenuItem>
         </Popover>
       )}
     </>
